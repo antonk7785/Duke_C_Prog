@@ -6,7 +6,7 @@ int getSecretNumber(void); //prototype, implemented elsewhere.
 int getOtherSN(int which); //prototype, implemented elsewhere.
 
 int main(void) {
-  int guessesMade = 0;
+  int guesesMade = 0;
   int yourGuess;
   char buffer[1024];
   int myNumber = getSecretNumber();
