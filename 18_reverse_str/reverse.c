@@ -3,8 +3,19 @@
 #include <string.h>
 
 void reverse(char * str) {
-  //WRITE ME!
+  
+  int size = strlen(str);
+  char temp[size];
+  for (int i = 0; i < size; i++)
+  {
+    temp[i] = str[size - 1 - i];
+  }
+  for (int i = 0; i < size; i++)
+  {
+    str[i] = temp[i];
+  }
 }
+
 
 int main(void) {
   char str0[] = "";
