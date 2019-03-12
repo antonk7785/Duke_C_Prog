@@ -4,15 +4,19 @@
 
 void reverse(char * str) {
   
-  int size = strlen(str);
-  char temp[size];
-  for (int i = 0; i < size; i++)
+  if (str != NULL)
   {
-    temp[i] = str[size - 1 - i];
-  }
-  for (int i = 0; i < size; i++)
-  {
-    str[i] = temp[i];
+    int size = strlen(str);
+    char temp[size];
+    for (int i = 0; i < size; i++)
+    {
+      temp[i] = str[size - 1 - i];
+    }
+    
+    for (int i = 0; i < size; i++)
+    {
+      str[i] = temp[i];
+    }
   }
 }
 
