@@ -156,7 +156,7 @@ int is_n_straight_at(deck_t * hand, size_t index, unsigned n)
 
 int is_n_straightflush_at(deck_t * hand, size_t index, unsigned n, suit_t fs)
 { 
-  if (hand->n_cards - index >= n)
+  if ((hand->n_cards - index >= n) && (hand->cards[index]->suit == fs))
   {
     int str_count = 0; 
     for (int i = index; i < hand->n_cards - 1; i++)
@@ -172,18 +172,46 @@ int is_n_straightflush_at(deck_t * hand, size_t index, unsigned n, suit_t fs)
          
             if (hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1))
             {
-              for (int j = i + 2; j < hand->n_cards - 1; j++)
+              if (hand->cards[i + 1]->suit == fs)
               {
-                if ((hand->cards[j]->value == hand->cards[i + 1]->value) && (hand->cards[j]->suit == fs))
+                str_count++;
+              }           
+              else
+              { 
+                if (i < hand->n_cards - 2)
                 {
-                  str_count++;
+                  if (hand->cards[i + 1]->value == hand->cards[i + 2]->value)
+                  {  
+                    int check = 0;             
+                    for (int j = i + 2; j < hand->n_cards; j++)
+                    {
+                      if ((hand->cards[j]->value == hand->cards[i + 1]->value) && (hand->cards[j]->suit == fs))
+                      {
+                        str_count++;
+                        check = 1;
+                      }
+                    }
+                    if (check == 0)
+                    {
+                      return 0;
+                    }
+                  }
+                  else
+                  {
+                    return 0;
+                  }
+                }
+                else
+                {
+                  return 0;
                 }
               }
             }
             else
-            {      
+            {        
               return 0;
             }
+             
                
         }
       }	 
