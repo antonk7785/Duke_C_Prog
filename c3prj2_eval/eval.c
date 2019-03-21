@@ -154,14 +154,14 @@ int is_n_straight_at(deck_t * hand, size_t index, unsigned n)
   return 0;
 }
 
-int is_n_straightflush_at(deck_t * hand, size_t index, unsigned n)
+int is_n_straightflush_at(deck_t * hand, size_t index, unsigned n, suit_t fs)
 { 
   if (hand->n_cards - index >= n)
   {
     int str_count = 0; 
     for (int i = index; i < hand->n_cards - 1; i++)
     { 
-      if ((hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1)) && (hand->cards[i]->suit == hand->cards[i + 1]->suit))
+      if ((hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1)) && ((hand->cards[i]->suit == fs) && (hand->cards[i + 1]->suit == fs)))
       {
         str_count++;
       }
@@ -169,7 +169,22 @@ int is_n_straightflush_at(deck_t * hand, size_t index, unsigned n)
       {
         if (hand->cards[i]->value != hand->cards[i + 1]->value)
         {
-          return 0;      
+         
+            if (hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1))
+            {
+              for (int j = i + 2; j < hand->n_cards - 1; j++)
+              {
+                if ((hand->cards[j]->value == hand->cards[i + 1]->value) && (hand->cards[j]->suit == fs))
+                {
+                  str_count++;
+                }
+              }
+            }
+            else
+            {      
+              return 0;
+            }
+               
         }
       }	 
       
@@ -182,6 +197,30 @@ int is_n_straightflush_at(deck_t * hand, size_t index, unsigned n)
   }
   return 0;
 }
+
+
+int is_acelow_strflush(deck_t * hand, size_t index, suit_t fs)
+{
+  int check = 0;
+  for (int i = index; i < hand->n_cards; i++)
+  {
+    if (hand->cards[i]->value == 5 && hand->cards[i]->suit == fs)
+    {
+      int k = i;
+      check = is_n_straightflush_at(hand, k, 4, fs);
+    }
+   
+  }
+  if (check)
+  {
+    return 1;
+  }
+  else 
+  { 
+    return 0;
+  }
+}
+
 
 int is_straight_at(deck_t * hand, size_t index, suit_t fs) 
 {
@@ -234,74 +273,37 @@ int is_straight_at(deck_t * hand, size_t index, suit_t fs)
 
   if (fs != NUM_SUITS)  //if suit is != NUM_SUITS
   {
-    int str_count = 0;
-         
-    int ace_str = 0;
-    
-    for (int i = index; i < hand->n_cards - 1; i++)
+    if (hand->cards[index]->suit != fs)
     {
- 
-      if ((hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1)) && ((hand->cards[i]->suit == fs) && (hand->cards[i + 1]->suit == fs)))
-      {
-        str_count++;
-      }
-      else
-      {
-        if ((hand->cards[i]->value != hand->cards[i + 1]->value) && (hand->cards[i]->value != ((hand->cards[i + 1]->value) + 1)))
-        {
-	  if (hand->cards[i]->value == 14)
-          {
-            for (int j = i + 1; j < hand->n_cards; j++)
-            {
-              if (hand->cards[j]->value == 5 && hand->cards[j]->suit == fs)
-              {
-                int k = j;
-                ace_str = is_n_straightflush_at(hand, k, 4);
-              }
-            }
-            if (ace_str)
-            {  
-              return -1;
-            }
-            else
-            {
-              return 0;
-            }
-          }
-        }
-        else
-        { 
-          if (hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1))
-          {
-            int ch = 0;
-            for (int j = i + 1; j < hand->n_cards; j++)
-            {
-              if ((hand->cards[j]->value == hand->cards[i + 1]->value) && (hand->cards[j]->suit == fs))
-              {
-                ch = 1;
-                str_count++;  
-              }
-            }    
-            if (ch == 0)
-            {
-              return 0;
-            }
-          } 
-          else
-          {
-            return 0;
-          }
-        } 
-	
-      } 
-      if (str_count == 4)
-      {
-        return 1;
-      }    
-  
-    }  
-  }
+      return 0;
+    }
+            
+    int acelow_str = 0;
 
+    int acehi_str = 0;
+ 
+    int e_str = 0;
+    
+    if (hand->cards[index]->value == 14)
+    {
+      acelow_str = is_acelow_strflush(hand, index, fs);
+      acehi_str = is_n_straightflush_at(hand, index, 5, fs);
+    }
+    else
+    {
+      e_str = is_n_straightflush_at(hand, index, 5, fs);
+    }
+
+    if (acehi_str || e_str)
+    {
+      return 1;
+    }
+
+    if (acelow_str)
+    {
+      return -1;
+    }
+  }  
   return 0;
 }
 
