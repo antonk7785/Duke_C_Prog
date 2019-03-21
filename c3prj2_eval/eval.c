@@ -127,7 +127,7 @@ ssize_t  find_secondary_pair(deck_t * hand, unsigned * match_counts, size_t matc
 
 int is_n_straight_at(deck_t * hand, size_t index, unsigned n)
 { 
-  if (hand->n_cards - index >= n)
+  if (((hand->n_cards) - index) >= n)
   {
     int str_count = 0; 
     for (int i = index; i < hand->n_cards - 1; i++)
@@ -201,7 +201,7 @@ int is_straight_at(deck_t * hand, size_t index, suit_t fs)
 	  if (hand->cards[index]->value == 14)
           {
             int ace_str = 0;
-            for (int j = i + 1; j < hand->n_cards - 4; j++)
+            for (int j = i + 1; j < hand->n_cards; j++)
             {
               if (hand->cards[j]->value == 5)
               {
@@ -247,7 +247,7 @@ int is_straight_at(deck_t * hand, size_t index, suit_t fs)
       }
       else
       {
-        if (hand->cards[i]->value != hand->cards[i + 1]->value)
+        if ((hand->cards[i]->value != hand->cards[i + 1]->value) && (hand->cards[i]->value != ((hand->cards[i + 1]->value) + 1)))
         {
 	  if (hand->cards[i]->value == 14)
           {
@@ -268,31 +268,31 @@ int is_straight_at(deck_t * hand, size_t index, suit_t fs)
               return 0;
             }
           }
-          else
-          { 
-            if (hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1))
+        }
+        else
+        { 
+          if (hand->cards[i]->value == ((hand->cards[i + 1]->value) + 1))
+          {
+            int ch = 0;
+            for (int j = i + 1; j < hand->n_cards; j++)
             {
-              int ch = 0;
-              for (int j = i + 1; j < hand->n_cards; j++)
+              if ((hand->cards[j]->value == hand->cards[i + 1]->value) && (hand->cards[j]->suit == fs))
               {
-                if ((hand->cards[j]->value == hand->cards[i + 1]->value) && (hand->cards[j]->suit == fs))
-                {
-                  ch = 1;
-                  str_count++;  
-                }
-              }    
-              if (ch == 0)
-              {
-                return 0;
+                ch = 1;
+                str_count++;  
               }
-            } 
-            else
+            }    
+            if (ch == 0)
             {
               return 0;
             }
           } 
-	}
-        
+          else
+          {
+            return 0;
+          }
+        } 
+	
       } 
       if (str_count == 4)
       {
