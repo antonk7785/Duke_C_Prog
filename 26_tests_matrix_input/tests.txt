@@ -1,0 +1,10 @@
+test0.txt
+test1.txt
+test2.txt
+test3.txt
+test4.txt
+test5.txt
+test6.txt
+
+1 2 3 4 5 6
+hui_tomu_V_gopu_kto_eto_pridumal.txt
