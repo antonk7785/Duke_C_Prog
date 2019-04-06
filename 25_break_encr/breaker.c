@@ -17,6 +17,7 @@ int freq_counter(FILE * f)
   }
   
   int max = freq_arr[0];
+  c = 'a';
   for (int i = 0; i < 26; i++)
   {
     if (freq_arr[i] > max)
@@ -31,7 +32,7 @@ int freq_counter(FILE * f)
 
 void decrypt(int c)
 {
-  unsigned key; 
+  unsigned key = 0; 
   if (c < 101)
   {
     key = 26 - (101 - c);
