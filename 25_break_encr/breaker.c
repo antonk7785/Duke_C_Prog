@@ -34,7 +34,7 @@ void decrypt(int c)
   unsigned key; 
   if (c < 101)
   {
-    key = 101 - c;
+    key = 26 - (101 - c);
   }
   else
   {
