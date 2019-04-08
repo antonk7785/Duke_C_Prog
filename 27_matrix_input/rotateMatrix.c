@@ -67,12 +67,12 @@ void read_matrix(FILE * f, int matrix[M_S][M_S])
         {   
           if (j < M_S && c == 10)
           {
-            printf("Invalid input: Line is too short\n");
+            printf("Invalid input: line is too short\n");
             exit(EXIT_FAILURE);
           }
           if (j >= M_S)
           {
-            printf("Invalid input: Line is too long\n");
+            printf("Invalid input: line is too long\n");
             exit(EXIT_FAILURE);
           }
         }
@@ -80,13 +80,13 @@ void read_matrix(FILE * f, int matrix[M_S][M_S])
     }
     else
     {
-      printf("Invalid input: Line is too long\n");
+      printf("Invalid input: line is too long\n");
       exit(EXIT_FAILURE);
     }
   }
   if (i <  M_S)
   { 
-    printf("Invalid input: Line is too short\n");
+    printf("Invalid input: line is too short\n");
     exit(EXIT_FAILURE);
   } 
 }
