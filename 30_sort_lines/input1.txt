@@ -1,0 +1,3 @@
+Another example of input file
+How are you?
+Ta ta ta  ta da! 
