@@ -18,62 +18,69 @@ void sortData(char ** data, size_t count)
   qsort(data, count, sizeof(char *), stringOrder);
 }
 
-int main(int argc, char ** argv)
+char ** read_file(FILE *f, char **array, size_t *index){
+  char *line = NULL;
+  size_t sz = 0;
+  while(getline(&line, &sz, f) >= 0)
+  {
+    array=realloc(array,((*index)+1)*sizeof(*array));
+    array[*index]=malloc((strlen(line)+1)*sizeof(array[*index]));
+    strcpy(array[*index],line);
+    free(line);
+    line=NULL;
+    (*index)++;
+  }
+  free(line);
+  return array;
+}
+
+void print_and_free(char **array, size_t index)
 {
-
-  //WRITE YOUR CODE HERE!
-  char **lines = NULL;
   size_t i = 0;
-  char *curr = NULL;
-  size_t sz;
-  int linelen;
-  if (argc == 1)
+  while(i < index)
   {
-    while ((linelen = getline(&curr, &sz, stdin)) > 0)
+    fprintf(stdout,"%s",array[i]);
+    free(array[i]);
+    i++;
+  }
+  free(array);
+}
+
+int main(int argc, char ** argv) 
+{
+  
+  //WRITE YOUR CODE HERE!
+  size_t index = 0;
+  char **array = NULL;
+  if(argc == 1)
+  {
+    array = read_file(stdin, array, &index);
+    sortData(array, index);
+    print_and_free(array, index);
+    array = NULL;
+  }
+  else
+  {
+    for(size_t i = 1; i < argc; i++)
     {
-      lines = realloc(lines, (i + 1) * sizeof(*lines));
-      lines[i] = curr;
-      curr = NULL;
-      i++;
+      FILE *input = fopen(argv[i], "r");
+      if(input == NULL)
+      {
+	fprintf(stderr, "Couldn't open %s file\n", argv[i]);
+	return EXIT_FAILURE;
+      }
+      index = 0;
+      array = read_file(input, array, &index);
+      sortData(array, index);
+      print_and_free(array, index);
+      array = NULL;
+      if(fclose(input) != 0)
+      {
+	fprintf(stderr, "Couldn't close %s file\n", argv[i]);
+	return EXIT_FAILURE;
+      }
     }
   }
-  if (argc > 1)
-  {
-    for (int j = 1; j < argc; j++)
-    {
-      FILE *f = fopen(argv[j], "r");
-      if (f == NULL)
-      {
-        fprintf(stdout, "Couldn't open %s file\n", argv[j]);
-        return EXIT_FAILURE;
-      }
-      else
-      {
-        while (getline(&curr, &sz, f) >= 0)
-	{
-	  lines = realloc(lines, (i + 1) * sizeof(*lines));
-	  lines[i] = curr;
-	  curr = NULL;
-	  i++;
-	}
-
-      }
-      if (fclose(f) != 0)
-      {
-        fprintf(stdout, "Couldn't close %s file\n", argv[j]);
-        return EXIT_FAILURE;
-      }
-    }
-  }
-  
-  sortData(lines, i);
-  
-  for(size_t j = 0; j < i; j++)
-  {
-    fprintf(stdout, "%s", lines[j]);
-    free(lines[j]);
-  }
-
-  free(lines);
   return EXIT_SUCCESS;
 }
+
