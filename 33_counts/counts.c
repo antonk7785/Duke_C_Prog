@@ -33,7 +33,7 @@ void addCount(counts_t * c, const char * name)
     if (t == 0)
     {
       one_count_t * temp = malloc(sizeof(* temp));
-      temp->key = malloc(strlen(name) * sizeof(char));
+      temp->key = malloc(strlen(name) + 2);
       strcpy(temp->key, name);
       temp->count = 1;
       c->cntArr = realloc(c->cntArr, (c->len + 1) * sizeof(* c->cntArr));
