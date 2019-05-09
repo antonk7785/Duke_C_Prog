@@ -1,52 +1,78 @@
-#include<string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include <assert.h>
-#include "deck.h"
-#include "cards.h"
-#include "future.h"
-deck_t * hand_from_string(const char * str, future_cards_t * fc){
-  deck_t* deck=malloc(sizeof(*deck));
-  deck->cards = NULL;
-  deck->n_cards=0;
-  for(int i=0;i<strlen(str);i++){
-    if((str[i] == '\n')||(str[i] == ' '))continue;
-    else{
-      if(str[i] == '?'){
-	i++;
-	char num[strlen(str)];
-	int n=0;
-	while(!((str[i] == '\n')||(str[i] == ' '))) {
-	  num[n]=str[i];
-	  i++;n++;}
-	num[n]='\0';
-	add_future_card(fc,atoi(num),add_empty_card(deck)) ;
+#include "input.h"
 
+deck_t * hand_from_string(const char * str, future_cards_t * fc) {
+  int i = 0;
+  int j = 0;
+  deck_t * d = malloc(sizeof(*d));
+  d->n_cards = 0;
+  d->cards = 0;
+  while (str[i] != '\0') {
+    if (isalnum(str[i]) && isalpha(str[i+1])) {
+      card_t c = card_from_letters(str[i], str[i+1]);
+      assert_card_valid(c);
+      add_card_to(d, c);
+      i = i + 2;
+      j++;
+    } else {
+      if (str[i] == '?') {
+	assert(isdigit(str[i+1]));
+	int k = 0;
+	char * index = NULL;
+	while(isdigit(str[i + k + 1])) {
+	  index = realloc(index, (k + 1) * sizeof(*index));
+	  index[k] = str[i + k + 1];
+	  k++;
+	}
+	index = realloc(index, (k + 1) * sizeof(*index));
+	index[k] = '\0';
+	int ix = atoi(index);
+	free(index);
+	card_t * ec = add_empty_card(d);
+	add_future_card(fc, ix, ec);
+	i = i + 2;
+	j++;
+      } else { // white space : skip
+	i++;
       }
-      else{
-	card_t x = card_from_letters(str[i],str[i+1]);
-	add_card_to(deck,x);
-	i++;}
     }
   }
-  if (deck->n_cards < 5 ){
-    return NULL;
-    fprintf(stderr,"asas");}
-  return deck;
+
+  if (j < 5) {
+    fprintf(stderr, "At least 5 cards per input line !\n");
+    free_deck(d);
+    exit(EXIT_FAILURE);
+  }
+
+  return d;
 }
-deck_t ** read_input(FILE * f, size_t * n_hands, future_cards_t * fc){
-  deck_t **arr=NULL;
-  size_t n_hand=0;
-  char *line=NULL;
-  size_t sz=0;
-  while(getline(&line,&sz,f)>=0){
-    arr=realloc(arr,(n_hand+1)*sizeof(*arr));
-    deck_t*deck=hand_from_string(line,fc);
-    if (deck == NULL)continue;
-    arr[n_hand]=deck;
-    n_hand ++;
+
+deck_t ** read_input(FILE * f, size_t * n_hands, future_cards_t *fc) {
+
+  deck_t ** decks = NULL;
+
+  size_t sz = 0;
+  ssize_t len = 0;
+  char * line = NULL;
+  size_t i = 0;
+  deck_t * hand = NULL;
+
+  while((len = getline(&line, &sz, f)) >= 0){
+    if (len > 1) {
+      hand = hand_from_string(line, fc);
+      decks = realloc(decks, (i + 1)*sizeof(*decks));
+      decks[i] = hand;
+      hand = NULL;
+      free(line);
+      line = NULL;
+      i++;
+    }
   }
   free(line);
-  *n_hands=n_hand;
-  return arr;
+  *n_hands = i;
+  return decks;
 }
