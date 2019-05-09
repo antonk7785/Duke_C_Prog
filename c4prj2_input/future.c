@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "deck.h"
 #include "cards.h"
+#include "eval.h"
 #include "future.h"
 
 void add_future_card(future_cards_t * fc, size_t index, card_t * ptr)
